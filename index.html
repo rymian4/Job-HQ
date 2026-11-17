@@ -1,0 +1,2038 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Job Search HQ · November 2026 refresh</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="Private, browser-based job application and recruiter tracker. Data stays in your browser.">
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --panel-2: #f8fafc;
+      --text: #162033;
+      --muted: #667085;
+      --line: #d9e0ea;
+      --accent: #1f5f99;
+      --accent-strong: #164875;
+      --accent-soft: #e8f1fa;
+      --good: #16794d;
+      --good-soft: #e8f6ef;
+      --warn: #9a6700;
+      --warn-soft: #fff5d8;
+      --danger: #b42318;
+      --danger-soft: #feeceb;
+      --purple: #6e49a8;
+      --purple-soft: #f1ebfa;
+      --shadow: 0 8px 24px rgba(27, 39, 58, .08);
+      --radius: 14px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        color-scheme: dark;
+        --bg: #0e1420;
+        --panel: #151d2b;
+        --panel-2: #111927;
+        --text: #eaf0f7;
+        --muted: #a6b0c0;
+        --line: #2b3749;
+        --accent: #69a9df;
+        --accent-strong: #91c1e9;
+        --accent-soft: #18314a;
+        --good: #65c997;
+        --good-soft: #153628;
+        --warn: #f0c463;
+        --warn-soft: #3d3014;
+        --danger: #ff8a82;
+        --danger-soft: #451f20;
+        --purple: #b9a0df;
+        --purple-soft: #2c2341;
+        --shadow: 0 8px 24px rgba(0, 0, 0, .25);
+      }
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    button, input, select, textarea { font: inherit; }
+    a { color: var(--accent); }
+    button { cursor: pointer; }
+
+    .app-shell { min-height: 100vh; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: color-mix(in srgb, var(--panel) 94%, transparent);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+    }
+    .topbar-inner {
+      max-width: 1500px;
+      margin: 0 auto;
+      padding: 14px 22px 10px;
+    }
+    .brand-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .brand h1 { margin: 0; font-size: 1.25rem; letter-spacing: -.02em; }
+    .brand p { margin: 3px 0 0; color: var(--muted); font-size: .9rem; }
+    .save-state { color: var(--muted); font-size: .86rem; white-space: nowrap; }
+    .save-state strong { color: var(--good); font-weight: 600; }
+
+    .tabs {
+      display: flex;
+      gap: 6px;
+      margin-top: 12px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+    .tab-button {
+      border: 0;
+      border-radius: 999px;
+      padding: 8px 13px;
+      background: transparent;
+      color: var(--muted);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .tab-button:hover { background: var(--panel-2); color: var(--text); }
+    .tab-button.active { background: var(--accent); color: white; }
+
+    main {
+      max-width: 1500px;
+      margin: 0 auto;
+      padding: 22px;
+    }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .toolbar h2 { margin: 0; font-size: 1.15rem; }
+    .toolbar p { margin: 3px 0 0; color: var(--muted); font-size: .9rem; }
+    .button-row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .btn {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 9px 13px;
+      background: var(--panel);
+      color: var(--text);
+      font-weight: 600;
+    }
+    .btn:hover { border-color: var(--accent); }
+    .btn.primary { background: var(--accent); color: white; border-color: var(--accent); }
+    .btn.primary:hover { background: var(--accent-strong); }
+    .btn.danger { color: var(--danger); border-color: color-mix(in srgb, var(--danger) 40%, var(--line)); }
+    .btn.small { padding: 6px 9px; font-size: .84rem; border-radius: 8px; }
+    .btn.linkish { border: 0; background: transparent; color: var(--accent); padding: 5px; }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(140px, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .metric {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 15px;
+    }
+    .metric .label { color: var(--muted); font-size: .82rem; font-weight: 600; }
+    .metric .value { font-size: 1.75rem; font-weight: 750; margin-top: 4px; }
+    .metric .detail { color: var(--muted); font-size: .78rem; margin-top: 3px; }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(300px, .65fr);
+      gap: 16px;
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .panel-header {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .panel-header h3 { margin: 0; font-size: 1rem; }
+    .panel-header span { color: var(--muted); font-size: .82rem; }
+    .panel-body { padding: 14px 16px; }
+
+    .pipeline-list { display: grid; gap: 9px; }
+    .pipeline-item {
+      display: grid;
+      grid-template-columns: minmax(110px, 1fr) 3fr 40px;
+      align-items: center;
+      gap: 10px;
+      font-size: .88rem;
+    }
+    .track { height: 10px; background: var(--panel-2); border-radius: 999px; overflow: hidden; border: 1px solid var(--line); }
+    .fill { height: 100%; background: var(--accent); border-radius: 999px; }
+
+    .filters {
+      display: grid;
+      grid-template-columns: minmax(200px, 2fr) repeat(5, minmax(135px, 1fr));
+      gap: 9px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    .field label, .form-field label {
+      display: block;
+      font-size: .78rem;
+      font-weight: 650;
+      color: var(--muted);
+      margin-bottom: 5px;
+    }
+    input, select, textarea {
+      width: 100%;
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      padding: 9px 10px;
+      background: var(--panel);
+      color: var(--text);
+      outline: none;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
+    }
+    textarea { resize: vertical; min-height: 90px; }
+
+    .table-wrap {
+      overflow-x: auto;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1250px;
+    }
+    th, td {
+      border-bottom: 1px solid var(--line);
+      padding: 10px 11px;
+      text-align: left;
+      vertical-align: top;
+      font-size: .86rem;
+    }
+    th {
+      position: sticky;
+      top: 0;
+      background: var(--panel-2);
+      z-index: 2;
+      color: var(--muted);
+      font-size: .75rem;
+      letter-spacing: .02em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    tr:last-child td { border-bottom: 0; }
+    tbody tr:hover { background: color-mix(in srgb, var(--accent-soft) 42%, transparent); }
+    .role-title { font-weight: 700; margin-bottom: 2px; }
+    .company { color: var(--muted); }
+    .muted { color: var(--muted); }
+    .nowrap { white-space: nowrap; }
+    .fit-score { font-weight: 750; font-size: 1rem; }
+    .row-actions { display: flex; gap: 5px; align-items: center; white-space: nowrap; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: .74rem;
+      font-weight: 700;
+      line-height: 1;
+      white-space: nowrap;
+      border: 1px solid transparent;
+    }
+    .badge.blue { color: var(--accent); background: var(--accent-soft); }
+    .badge.green { color: var(--good); background: var(--good-soft); }
+    .badge.yellow { color: var(--warn); background: var(--warn-soft); }
+    .badge.red { color: var(--danger); background: var(--danger-soft); }
+    .badge.purple { color: var(--purple); background: var(--purple-soft); }
+    .badge.gray { color: var(--muted); background: var(--panel-2); border-color: var(--line); }
+
+    .compact-list { display: grid; gap: 7px; }
+    .compact-item {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .compact-item:last-child { border-bottom: 0; }
+    .compact-item strong { display: block; }
+    .compact-item small { color: var(--muted); }
+    .empty {
+      text-align: center;
+      padding: 30px 16px;
+      color: var(--muted);
+    }
+
+    .backup-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .help-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+    .help-card h3 { margin: 0 0 8px; font-size: 1rem; }
+    .help-card p, .help-card li { color: var(--muted); font-size: .9rem; line-height: 1.5; }
+    .help-card ol, .help-card ul { padding-left: 20px; }
+    code {
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      padding: 1px 5px;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(5, 12, 24, .62);
+      display: none;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 28px 14px;
+      overflow-y: auto;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal {
+      width: min(980px, 100%);
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px 18px;
+      border-bottom: 1px solid var(--line);
+      position: sticky;
+      top: 0;
+      background: var(--panel);
+      z-index: 3;
+    }
+    .modal-header h2 { margin: 0; font-size: 1.05rem; }
+    .icon-btn {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      font-size: 1.4rem;
+      padding: 2px 7px;
+      border-radius: 8px;
+    }
+    .icon-btn:hover { background: var(--panel-2); color: var(--text); }
+    .modal-body { padding: 18px; }
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 13px;
+    }
+    .form-grid .span-2 { grid-column: 1 / -1; }
+    .section-label {
+      grid-column: 1 / -1;
+      font-size: .8rem;
+      font-weight: 750;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      padding-top: 8px;
+      border-top: 1px solid var(--line);
+    }
+    .modal-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 14px 18px;
+      border-top: 1px solid var(--line);
+      background: var(--panel-2);
+    }
+    .checkbox-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      min-height: 40px;
+    }
+    .checkbox-row input { width: auto; }
+
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 200;
+      max-width: 380px;
+      background: var(--text);
+      color: var(--panel);
+      border-radius: 11px;
+      padding: 11px 14px;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transform: translateY(10px);
+      pointer-events: none;
+      transition: .2s ease;
+      font-size: .88rem;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    .storage-warning {
+      display: none;
+      margin: 10px 0 0;
+      padding: 9px 11px;
+      border-radius: 10px;
+      background: var(--warn-soft);
+      color: var(--warn);
+      font-size: .84rem;
+    }
+    .storage-warning.show { display: block; }
+
+    @media (max-width: 1050px) {
+      .metrics { grid-template-columns: repeat(3, 1fr); }
+      .grid-2 { grid-template-columns: 1fr; }
+      .filters { grid-template-columns: repeat(3, 1fr); }
+      .filters .search-field { grid-column: 1 / -1; }
+    }
+    @media (max-width: 700px) {
+      main { padding: 14px; }
+      .topbar-inner { padding: 12px 14px 9px; }
+      .metrics { grid-template-columns: repeat(2, 1fr); }
+      .filters { grid-template-columns: 1fr 1fr; }
+      .filters .search-field { grid-column: 1 / -1; }
+      .form-grid { grid-template-columns: 1fr; }
+      .form-grid .span-2, .section-label { grid-column: 1; }
+      .backup-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 430px) {
+      .metrics { grid-template-columns: 1fr; }
+      .filters { grid-template-columns: 1fr; }
+      .filters .search-field { grid-column: 1; }
+      .modal-footer { align-items: stretch; flex-direction: column-reverse; }
+      .modal-footer .button-row { width: 100%; }
+      .modal-footer .btn { flex: 1; }
+    }
+  
+    /* Nov 2026 workspace refresh */
+    main,.topbar-inner {max-width:1720px}
+    .brand h1 {font-size:1.38rem;letter-spacing:-.035em}
+    .topbar {box-shadow:0 2px 18px rgba(20,40,70,.045)}
+    button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {outline:2px solid var(--accent);outline-offset:2px}
+    .goal-strip{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;padding:21px 23px;margin-bottom:16px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+    .goal-strip strong{display:block;font-size:1.25rem;letter-spacing:-.03em;margin:3px 0 5px}
+    .goal-strip small{display:block;color:var(--muted)}
+    .goal-kicker{font-size:.7rem;font-weight:800;letter-spacing:.11em;color:var(--accent)}
+    .goal-actions{display:flex;gap:8px;flex-wrap:wrap}
+    .focus-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+    .focus-grid>div{display:flex;flex-direction:column;gap:8px;padding:15px;border:1px solid var(--line);border-radius:12px;background:var(--panel-2)}
+    .focus-grid span{color:var(--muted);font-size:.87rem;line-height:1.5;flex:1}
+    .focus-grid .btn{align-self:flex-start}
+    .view-tabs{display:flex;align-items:center;flex-wrap:wrap;gap:7px;margin:12px 0 15px}
+    .view-tab{border:1px solid var(--line);background:var(--panel);color:var(--muted);padding:9px 14px;border-radius:9px;font-weight:650;font-size:.86rem}
+    .view-tab.active{background:var(--accent-soft);border-color:var(--accent);color:var(--accent-strong)}
+    .view-tab:hover{color:var(--text);border-color:var(--accent)}
+    .view-tab b{font-size:.76rem;margin-left:5px;font-variant-numeric:tabular-nums}
+    .mini-status{max-width:155px;width:100%;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--text);font-size:.81rem;font-weight:600;padding:6px 7px}
+    .fresh-dot{display:inline-flex;align-items:center;font-size:.69rem;font-weight:750;background:var(--good-soft);color:var(--good);border-radius:6px;padding:3px 6px;margin-top:6px}
+    .muted-note{display:block;color:var(--muted);font-size:.76rem;line-height:1.35;margin-top:4px}
+    .tiny-action{border:0;background:none;color:var(--accent);font-size:.77rem;padding:5px 0;text-align:left;cursor:pointer}
+    #jobs table {min-width:970px;table-layout:auto}
+    #recruiters table {min-width:900px;table-layout:auto}
+    #jobs td,#recruiters td {font-size:.84rem}
+    #jobs td .role-title {font-size:.89rem;line-height:1.3}
+    #jobs td .company {font-size:.79rem;line-height:1.3;margin-top:4px}
+    .role-links{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px}
+    .role-links .fresh-dot{margin:0}
+    .clamp-two{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    #jobs td .row-actions,#recruiters td .row-actions{flex-wrap:wrap}
+    .table-wrap {box-shadow:var(--shadow);border-radius:var(--radius)}
+    th{white-space:nowrap}
+    td{vertical-align:middle}
+    .metrics .value{font-variant-numeric:tabular-nums}
+    .help-card p{line-height:1.55}
+    @media(max-width:920px){.focus-grid{grid-template-columns:1fr}.goal-strip{align-items:flex-start}}
+  
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="brand-row">
+          <div class="brand">
+            <h1>Ryan's Job Search HQ</h1>
+            <p>Focused applications · recruiter outreach · follow-ups · private browser data.</p>
+          </div>
+          <div class="save-state" id="saveState"><strong>Saved locally</strong> · just now</div>
+        </div>
+        <div id="storageWarning" class="storage-warning">
+          Browser storage is unavailable for this file. Changes will work during this session, but export a JSON backup before closing.
+        </div>
+        <nav class="tabs" aria-label="Tracker sections">
+          <button class="tab-button active" data-tab="dashboard">Dashboard</button>
+          <button class="tab-button" data-tab="jobs">Jobs</button>
+          <button class="tab-button" data-tab="recruiters">Recruiters</button>
+          <button class="tab-button" data-tab="backups">Backups & Updates</button>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section id="dashboard" class="tab-panel active">
+        <div class="toolbar">
+          <div>
+            <h2>Job search command center</h2>
+            <p>Target: secure the next role ahead of April 2027. Prioritize high-fit openings, outreach, and interview momentum.</p>
+          </div>
+          <div class="button-row">
+            <button class="btn" id="dashboardAddRecruiter">Add recruiter</button>
+            <button class="btn primary" id="dashboardAddJob">Add job</button>
+          </div>
+        </div>
+
+        <div class="goal-strip"><div><span class="goal-kicker">THE NEXT CHAPTER</span><strong>New role before the wedding</strong><small id="goalCountdown">April 2027 target</small></div><div class="goal-actions"><button class="btn" id="quickBackup">Back up progress</button><button class="btn primary" id="quickImport">Import refreshed tracker</button></div></div>
+        <div class="metrics" id="metrics"></div>
+        <div class="panel" style="margin-bottom:16px"><div class="panel-header"><div><h3>This week's focus</h3><span>Simple, repeatable actions—not a giant backlog.</span></div></div><div class="panel-body"><div class="focus-grid"><div><strong>01 · Clean up responses</strong><span>Use the Rejected view and one-click status dropdown. Do not delete application history.</span><button class="btn small" data-jump-group="Rejected">Review responses</button></div><div><strong>02 · Apply to fresh fits</strong><span>Start with November-verified, high-fit listings. Check the posting before applying.</span><button class="btn small" data-jump-group="fresh">See refreshed roles</button></div><div><strong>03 · Work your network</strong><span>Reach out to recruiters and follow up on viable submitted applications.</span><button class="btn small" data-open-tab="recruiters">Review recruiters</button></div></div></div></div>
+
+        <div class="grid-2">
+          <div class="panel">
+            <div class="panel-header">
+              <div>
+                <h3>Priority application queue</h3>
+                <span>Freshly verified openings are surfaced first</span>
+              </div>
+              <button class="btn small" data-open-tab="jobs">View all</button>
+            </div>
+            <div class="panel-body" id="topJobs"></div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <div>
+                <h3>Application follow-ups</h3>
+                <span>Due or scheduled within 14 days</span>
+              </div>
+            </div>
+            <div class="panel-body" id="followUps"></div>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-top:16px">
+          <div class="panel-header">
+            <div>
+              <h3>Application pipeline</h3>
+              <span>Active jobs by current status</span>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="pipeline-list" id="pipeline"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="jobs" class="tab-panel">
+        <div class="toolbar">
+          <div>
+            <h2>Job tracker</h2>
+            <p id="jobCountText">Filter, update and close out applications without losing history.</p>
+          </div>
+          <div class="button-row">
+            <span id="bulkSelectionCount" class="muted" style="font-size:.82rem">0 selected</span>
+            <button class="btn" id="bulkReject" disabled>Mark selected rejected</button>
+            <button class="btn" id="bulkArchive" disabled>Archive selected</button>
+            <button class="btn" id="exportJobsCsv">Export CSV</button>
+            <button class="btn primary" id="addJob">Add job</button>
+          </div>
+        </div>
+
+        <div class="view-tabs" id="jobViewTabs" role="group" aria-label="Application stages">
+          <button class="view-tab active" data-job-view="toapply">Not applied <b id="countToApply">0</b></button>
+          <button class="view-tab" data-job-view="applied">Applied <b id="countApplied">0</b></button>
+          <button class="view-tab" data-job-view="Rejected">Rejected <b id="countRejected">0</b></button>
+          <button class="view-tab" data-job-view="Archived">Archived <b id="countArchived">0</b></button>
+          <button class="view-tab" data-job-view="fresh">Nov 17 refresh <b id="countFresh">0</b></button>
+          <button class="view-tab" data-job-view="all">All jobs</button>
+        </div>
+        <div class="filters">
+          <div class="field search-field">
+            <label for="jobSearch">Search</label>
+            <input id="jobSearch" type="search" placeholder="Company, title, contact, note…">
+          </div>
+          <div class="field">
+            <label for="statusFilter">Status</label>
+            <select id="statusFilter"><option value="">All statuses</option></select>
+          </div>
+          <div class="field">
+            <label for="priorityFilter">Priority</label>
+            <select id="priorityFilter"><option value="">All priorities</option></select>
+          </div>
+          <div class="field">
+            <label for="laneFilter">Lane</label>
+            <select id="laneFilter"><option value="">All lanes</option></select>
+          </div>
+          <div class="field">
+            <label for="sourceFilter">Source</label>
+            <select id="sourceFilter"><option value="">All sources</option></select>
+          </div>
+          <div class="field">
+            <label for="sortJobs">Sort</label>
+            <select id="sortJobs">
+              <option value="priority">Priority + fit</option>
+              <option value="refreshed">Recently verified</option>
+              <option value="fit">Fit score</option>
+              <option value="followup">Follow-up date</option>
+              <option value="company">Company</option>
+              <option value="newest">Week added</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="archiveFilter">Visibility</label>
+            <select id="archiveFilter">
+              <option value="active">Active only</option>
+              <option value="all">Include archived</option>
+              <option value="archived">Archived only</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table aria-label="Job applications">
+            <thead><tr>
+              <th style="width:35px"><input type="checkbox" id="selectAllVisibleJobs" aria-label="Select all visible jobs" style="width:17px;height:17px"></th>
+              <th>Priority</th><th>Status · quick edit</th><th>Company / Role</th><th>Location / Compensation</th><th>Fit</th><th>Applied / Resume</th><th>Next action</th><th>Actions</th>
+            </tr></thead>
+            <tbody id="jobsTable"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="recruiters" class="tab-panel">
+        <div class="toolbar">
+          <div>
+            <h2>Recruiter relationships</h2>
+            <p>Track specialist recruiters, internal recruiters and follow-up timing.</p>
+          </div>
+          <div class="button-row">
+            <button class="btn primary" id="addRecruiter">Add recruiter</button>
+          </div>
+        </div>
+
+        <div class="view-tabs" id="recruiterViewTabs" role="group" aria-label="Recruiter outreach stages">
+          <button class="view-tab active" data-recruiter-view="not">Not contacted</button>
+          <button class="view-tab" data-recruiter-view="contacted">Contacted</button>
+          <button class="view-tab" data-recruiter-view="archived">Archived</button>
+          <button class="view-tab" data-recruiter-view="all">All recruiters</button>
+        </div>
+        <div class="filters" style="grid-template-columns:minmax(220px,2fr) minmax(150px,1fr) minmax(150px,1fr)">
+          <div class="field search-field">
+            <label for="recruiterSearch">Search</label>
+            <input id="recruiterSearch" type="search" placeholder="Name, firm, specialty, notes…">
+          </div>
+          <div class="field">
+            <label for="recruiterStatusFilter">Status</label>
+            <select id="recruiterStatusFilter"><option value="">All statuses</option></select>
+          </div>
+          <div class="field">
+            <label for="recruiterSort">Sort</label>
+            <select id="recruiterSort">
+              <option value="followup">Next follow-up</option>
+              <option value="status">Relationship status</option>
+              <option value="name">Name</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table aria-label="Recruiter relationships" style="min-width:900px"><thead><tr>
+              <th>Name / Firm</th><th>Relationship</th><th>Posting / Application</th><th>Next follow-up</th><th>Contact / Notes</th><th>Actions</th>
+            </tr></thead>
+            <tbody id="recruitersTable"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="backups" class="tab-panel">
+        <div class="toolbar">
+          <div>
+            <h2>Backups and weekly updates</h2>
+            <p>Everything is stored in this browser. Keep private JSON backups off your public GitHub repository.</p>
+          </div>
+        </div>
+
+        <div class="backup-grid">
+          <div class="help-card">
+            <h3>Back up your complete tracker</h3>
+            <p>Export everything—jobs, application details, recruiters, document links and notes—to one JSON file.</p>
+            <div class="button-row">
+              <button class="btn primary" id="exportBackup">Export full backup</button>
+              <button class="btn" id="importDataButton">Import backup or update</button>
+            </div>
+            <input id="importFile" type="file" accept=".json,application/json" hidden>
+          </div>
+
+          <div class="help-card">
+            <h3>Weekly job update workflow</h3>
+            <ol>
+              <li>Export a full backup before a major update.</li>
+              <li>Ask ChatGPT for a weekly update pack using your current criteria.</li>
+              <li>Import the JSON update pack here.</li>
+              <li>New postings are added; your application tracking is preserved.</li>
+            </ol>
+            <button class="btn" id="downloadTemplate">Download update-pack template</button>
+          </div>
+
+          <div class="help-card">
+            <h3>Document tracking</h3>
+            <p>Each job can store the exact resume and cover-letter version used, plus optional Drive, OneDrive or Dropbox links. Local file paths are not portable between devices.</p>
+            <ul>
+              <li>Recommended resume version is seeded from the original tracker.</li>
+              <li>Resume used and cover letter used are editable after tailoring.</li>
+              <li>Store a cloud-document link when you need one-click access.</li>
+            </ul>
+          </div>
+
+          <div class="help-card">
+            <h3>GitHub Pages / privacy</h3>
+            <p><strong>GitHub Pages safe:</strong> This HTML contains only public job leads, no private application history or recruiter contacts. Import your refreshed PRIVATE JSON after opening the published URL. Do not commit the backup JSON to your public repo. Each browser/device has separate local storage.</p>
+            <div class="button-row">
+              <button class="btn" id="exportRecruitersCsv">Export recruiters CSV</button>
+              <button class="btn danger" id="resetAll">Reset to public starter data</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="help-card" style="margin-top:14px">
+          <h3>Storage status</h3>
+          <p id="storageDetails">Checking browser storage…</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="jobModalBackdrop" role="dialog" aria-modal="true" aria-labelledby="jobModalTitle">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="jobModalTitle">Add job</h2>
+        <button class="icon-btn" data-close-modal="job" aria-label="Close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="jobForm">
+          <input type="hidden" id="jobId">
+          <div class="form-grid">
+            <div class="section-label">Posting</div>
+            <div class="form-field">
+              <label for="jobCompany">Company *</label>
+              <input id="jobCompany" required>
+            </div>
+            <div class="form-field">
+              <label for="jobTitle">Job title *</label>
+              <input id="jobTitle" required>
+            </div>
+            <div class="form-field">
+              <label for="jobPriority">Priority</label>
+              <select id="jobPriority"></select>
+            </div>
+            <div class="form-field">
+              <label for="jobStatus">Status</label>
+              <select id="jobStatus"></select>
+            </div>
+            <div class="form-field">
+              <label for="jobLane">Lane</label>
+              <input id="jobLane" list="laneList">
+            </div>
+            <div class="form-field">
+              <label for="jobFit">Fit score</label>
+              <input id="jobFit" type="number" min="0" max="100">
+            </div>
+            <div class="form-field">
+              <label for="jobLocation">Location / work setup</label>
+              <input id="jobLocation">
+            </div>
+            <div class="form-field">
+              <label for="jobPay">Pay</label>
+              <input id="jobPay">
+            </div>
+            <div class="form-field">
+              <label for="jobSource">Source / freshness</label>
+              <input id="jobSource" placeholder="LinkedIn — posted 1 day ago">
+            </div>
+            <div class="form-field">
+              <label for="jobWeek">Week added</label>
+              <input id="jobWeek" type="date">
+            </div>
+            <div class="form-field span-2">
+              <label for="jobUrl">Application link</label>
+              <input id="jobUrl" type="url">
+            </div>
+            <div class="form-field span-2">
+              <label for="jobKeyTake">Key take / risk</label>
+              <textarea id="jobKeyTake"></textarea>
+            </div>
+
+            <div class="section-label">Application and documents</div>
+            <div class="form-field">
+              <label for="jobAppliedDate">Applied date</label>
+              <input id="jobAppliedDate" type="date">
+            </div>
+            <div class="form-field">
+              <label for="jobRecommendedResume">Recommended resume</label>
+              <input id="jobRecommendedResume" list="resumeList">
+            </div>
+            <div class="form-field">
+              <label for="jobResumeUsed">Resume used</label>
+              <input id="jobResumeUsed" list="resumeList" placeholder="Final filename or version">
+            </div>
+            <div class="form-field">
+              <label for="jobResumeLink">Resume link</label>
+              <input id="jobResumeLink" type="url" placeholder="Optional cloud link">
+            </div>
+            <div class="form-field">
+              <label for="jobCoverLetterUsed">Cover letter used</label>
+              <input id="jobCoverLetterUsed" list="letterList">
+            </div>
+            <div class="form-field">
+              <label for="jobCoverLetterLink">Cover letter link</label>
+              <input id="jobCoverLetterLink" type="url" placeholder="Optional cloud link">
+            </div>
+
+            <div class="section-label">People and follow-up</div>
+            <div class="form-field">
+              <label for="jobHiringManager">Hiring manager</label>
+              <input id="jobHiringManager">
+            </div>
+            <div class="form-field">
+              <label for="jobHiringManagerTitle">Hiring manager title</label>
+              <input id="jobHiringManagerTitle">
+            </div>
+            <div class="form-field span-2">
+              <label for="jobHiringManagerLink">Hiring manager LinkedIn / email</label>
+              <input id="jobHiringManagerLink">
+            </div>
+            <div class="form-field">
+              <label for="jobRecruiterName">Recruiter</label>
+              <input id="jobRecruiterName">
+            </div>
+            <div class="form-field">
+              <label for="jobRecruiterContact">Recruiter LinkedIn / email</label>
+              <input id="jobRecruiterContact">
+            </div>
+            <div class="form-field">
+              <label for="jobLastContact">Last contact</label>
+              <input id="jobLastContact" type="date">
+            </div>
+            <div class="form-field">
+              <label for="jobFollowUpDate">Next follow-up</label>
+              <input id="jobFollowUpDate" type="date">
+            </div>
+            <div class="form-field span-2">
+              <label for="jobNextStep">Next step</label>
+              <input id="jobNextStep" placeholder="Tailor resume, message hiring manager, prep screen…">
+            </div>
+            <div class="form-field span-2">
+              <label for="jobNotes">Notes</label>
+              <textarea id="jobNotes"></textarea>
+            </div>
+            <div class="form-field span-2">
+              <label class="checkbox-row">
+                <input id="jobArchived" type="checkbox">
+                Archive this posting
+              </label>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn danger" id="deleteJob" type="button" style="visibility:hidden">Delete job</button>
+        <div class="button-row">
+          <button class="btn" data-close-modal="job" type="button">Cancel</button>
+          <button class="btn primary" id="saveJob" type="button">Save job</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="recruiterModalBackdrop" role="dialog" aria-modal="true" aria-labelledby="recruiterModalTitle">
+    <div class="modal" style="max-width:760px">
+      <div class="modal-header">
+        <h2 id="recruiterModalTitle">Add recruiter</h2>
+        <button class="icon-btn" data-close-modal="recruiter" aria-label="Close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="recruiterForm">
+          <input type="hidden" id="recruiterId">
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="recruiterName">Name *</label>
+              <input id="recruiterName" required>
+            </div>
+            <div class="form-field">
+              <label for="recruiterFirm">Agency / company</label>
+              <input id="recruiterFirm">
+            </div>
+            <div class="form-field">
+              <label for="recruiterSpecialty">Specialty</label>
+              <input id="recruiterSpecialty" placeholder="Salesforce, D365, RevOps…">
+            </div>
+            <div class="form-field">
+              <label for="recruiterRelationshipStatus">Relationship status</label>
+              <select id="recruiterRelationshipStatus"></select>
+            </div>
+            <div class="form-field">
+              <label for="recruiterLinkedIn">LinkedIn</label>
+              <input id="recruiterLinkedIn" type="url">
+            </div>
+            <div class="form-field">
+              <label for="recruiterEmail">Email</label>
+              <input id="recruiterEmail" type="email">
+            </div>
+            <div class="form-field">
+              <label for="recruiterPhone">Phone</label>
+              <input id="recruiterPhone" type="tel">
+            </div>
+            <div class="form-field">
+              <label for="recruiterLastContact">Last contact</label>
+              <input id="recruiterLastContact" type="date">
+            </div>
+            <div class="form-field">
+              <label for="recruiterNextFollowUp">Next follow-up</label>
+              <input id="recruiterNextFollowUp" type="date">
+            </div>
+            <div class="form-field">
+              <label for="recruiterRelatedRoles">Related roles / companies</label>
+              <input id="recruiterRelatedRoles">
+            </div>
+            <div class="form-field"><label for="recruiterRelatedJobId">Linked job posting</label><select id="recruiterRelatedJobId"><option value="">General contact / not tied to posting</option></select></div>
+            <div class="form-field"><label for="recruiterConnectionType">Relationship type</label><input id="recruiterConnectionType" placeholder="Posting-related, general, agency, internal…"></div>
+            <div class="form-field span-2"><label class="checkbox-row"><input type="checkbox" id="recruiterArchived"> Archive this recruiter</label></div>
+            <div class="form-field span-2">
+              <label for="recruiterNotes">Notes</label>
+              <textarea id="recruiterNotes"></textarea>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn danger" id="deleteRecruiter" type="button" style="visibility:hidden">Delete recruiter</button>
+        <div class="button-row">
+          <button class="btn" data-close-modal="recruiter" type="button">Cancel</button>
+          <button class="btn primary" id="saveRecruiter" type="button">Save recruiter</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <datalist id="laneList">
+    <option>Salesforce</option>
+    <option>Dynamics 365</option>
+    <option>Revenue Systems</option>
+    <option>Cross-Platform CRM</option>
+    <option>Solutions Consulting</option>
+  </datalist>
+  <datalist id="resumeList">
+    <option>Dual-Platform CRM Architect</option>
+    <option>Salesforce Solution Architect</option>
+    <option>Dynamics 365 / Power Platform</option>
+    <option>Revenue Systems / RevOps</option>
+    <option>Business Systems / CRM</option>
+    <option>Solutions Consulting</option>
+  </datalist>
+  <datalist id="letterList">
+    <option>No cover letter</option>
+    <option>Short tailored cover letter</option>
+    <option>Full tailored cover letter</option>
+    <option>Application questions only</option>
+  </datalist>
+
+  <div class="toast" id="toast" aria-live="polite"></div>
+
+  <script>
+    const SEED_JOBS = [{"id":"nov17-operatus-revops-consultant","company":"Operatus","title":"RevOps Consultant","lane":"Salesforce / CRM Ownership","location":"Remote · US/Canada","pay":"$100,000–$115,000 base","fit":92,"priority":"A - Apply now","url":"https://job-boards.greenhouse.io/operatus/jobs/5473870008","keyTake":"Hands-on Salesforce fields, Flow, validation rules, requirements, reports, deduplication and multi-client RevOps execution. Very transferable from CSG; consulting delivery and client reporting cadence would be new. Confirm $100K+ offer without pay reduction.","recommendedResume":"Senior CRM Business Systems Analyst","nextStep":"Apply this week with Salesforce configuration + migration + reporting examples.","refreshBatch":"2026-11-17","listingStatus":"Employer listing found","verificationDate":"2026-11-17","sourceFreshness":"November 17 refresh · employer posting","weekAdded":"2026-11-17","status":"To Apply"},{"id":"nov17-rcx-sports-senior-revenue-operations-specialist","company":"RCX Sports","title":"Senior Revenue Operations Specialist","lane":"GTM / Revenue Systems","location":"Remote, United States","pay":"$100,500–$107,000 starting + possible bonus","fit":93,"priority":"A - Apply now","url":"https://job-boards.greenhouse.io/rcxsports/jobs/5434944008","keyTake":"Strong Salesforce platform-owner role: CRM intake, Flow, governance, data hygiene, deployments, cross-functional request prioritization, enablement and integration coordination. Pay is only a small lift from current base; consider quality of role and benefits.","recommendedResume":"Revenue Systems / RevOps","nextStep":"Apply with Salesforce admin and governance-focused resume; verify pay ceiling.","refreshBatch":"2026-11-17","listingStatus":"Employer listing found","verificationDate":"2026-11-17","sourceFreshness":"November 17 refresh · employer posting","weekAdded":"2026-11-17","status":"To Apply"},{"id":"nov17-cvs-aetna-salesforce-sales-administrator","company":"CVS Health / Aetna","title":"Salesforce Sales Administrator — Aetna Commercial","lane":"Salesforce / CRM Ownership","location":"Denver, CO listed · remote/hybrid varies by location","pay":"$67,900–$199,144 broad posting range; placement to verify","fit":88,"priority":"B - Strong","url":"https://builtin.com/job/salesforce-sales-administrator-aetna-commercial/12266067","keyTake":"Current requisition R1092121 listed on CVS Health careers. Stakeholder requirements, Salesforce configuration and sales enablement align; verify specific Colorado salary, location expectation and certification requirements before applying.","recommendedResume":"CRM Solutions Engineer / Salesforce","nextStep":"Verify Denver eligibility, real base range and required Salesforce certifications.","refreshBatch":"2026-11-17","listingStatus":"Job-board listing found; employer requisition cross-checked","verificationDate":"2026-11-17","sourceFreshness":"November 17 refresh · job-board result","weekAdded":"2026-11-17","status":"To Apply"},{"id":"nov17-linq-salesforce-manager","company":"LINQ","title":"Manager, Salesforce","lane":"Salesforce / CRM Ownership","location":"Denver, CO · office expectation to confirm","pay":"$140,000–$160,000 reported range; verify on posting","fit":73,"priority":"C - Look into","url":"https://job-boards.greenhouse.io/emslinqinc/jobs/5463852008","keyTake":"Denver leadership opportunity covering Salesforce, HubSpot, integrations, vendor management and team leadership. Meaningful stretch: expects 4+ years hands-on Apex/LWC development, code review and people leadership; not a first-wave application.","recommendedResume":"Revenue Systems / RevOps","nextStep":"Only pursue if manager receptive to configuration/platform ownership profile vs senior Apex developer.","refreshBatch":"2026-11-17","listingStatus":"Employer listing found","verificationDate":"2026-11-17","sourceFreshness":"November 17 refresh · employer posting","weekAdded":"2026-11-17","status":"To Apply"},{"id":"nov17-shift5-revenue-operations-specialist","company":"Shift5","title":"Revenue Operations Specialist","lane":"GTM / Revenue Systems","location":"Rosslyn, VA or remote · location details to verify","pay":"$90,000–$120,000 base + possible bonus/equity","fit":84,"priority":"B - Strong","url":"https://job-boards.greenhouse.io/shift5/jobs/6261970004","keyTake":"Salesforce architecture, pipeline dashboards, GTM tech-stack integrations, enablement and RevOps process ownership. Federal sales tooling is new; lower portion of salary band is below target. Confirm location and $100K+ early.","recommendedResume":"Revenue Systems / RevOps","nextStep":"Consider second wave after confirming salary placement and remote policy.","refreshBatch":"2026-11-17","listingStatus":"Employer listing found","verificationDate":"2026-11-17","sourceFreshness":"November 17 refresh · employer posting","weekAdded":"2026-11-17","status":"To Apply"},{"id":"nov17-cgi-salesforce-business-systems-analyst","company":"CGI","title":"Salesforce Business Systems Analyst","lane":"Business Systems / Enterprise Apps","location":"Remote, United States (listing describes nationwide remote)","pay":"$79,600–$156,700 listed range; verify CO placement","fit":85,"priority":"B - Strong","url":"https://click.appcast.io/t/IEZvSQQrWSU_XrB7nEeuSp_PERTEY09avzRU5TYUtcPOIErMatInTqaVJ076bpVBHPjWkvREWLn6Q_Xaili1ZQ==?sar_id=2biunv83&jpos=11","keyTake":"Salesforce BSA work in a larger delivery environment. Strong requirements, UAT, CRM adoption, governance overlap; third-party link and Colorado placement require confirmation on CGI careers before prioritizing.","recommendedResume":"Senior CRM Business Systems Analyst","nextStep":"Find employer-native requisition and confirm $100K+ base.","refreshBatch":"2026-11-17","listingStatus":"Job-board listing found — verify with employer","verificationDate":"2026-11-17","sourceFreshness":"November 17 refresh · job-board result","weekAdded":"2026-11-17","status":"To Apply"}];
+    const STORAGE_KEY = "ryan-job-search-hq-v1";
+    const APP_VERSION = 1;
+    const STATUS_OPTIONS = [
+      "To Apply", "Tailoring", "Applied", "Recruiter Screen", "Interviewing",
+      "Offer", "Rejected", "Withdrawn", "Archived"
+    ];
+    const PRIORITY_OPTIONS = ["A - Apply now", "B - Strong", "C - Look into", "D - Skip"];
+    const RECRUITER_STATUS_OPTIONS = [
+      "Not contacted", "Contacted", "Active conversation", "Replied", "Intro Call", "Active Relationship", "Dormant", "Target"
+    ];
+    const TRACKING_FIELDS = [
+      "status", "appliedDate", "resumeUsed", "resumeLink", "coverLetterUsed",
+      "coverLetterLink", "hiringManager", "hiringManagerTitle", "hiringManagerLink",
+      "recruiterName", "recruiterContact", "lastContact", "followUpDate",
+      "nextStep", "notes", "archived"
+    ];
+
+    let selectedJobIds = new Set();
+    let jobView = "toapply";
+    let recruiterView = "not";
+    let storageAvailable = true;
+    let saveTimer;
+    let state = loadState();
+
+    function nowIso() {
+      return new Date().toISOString();
+    }
+
+    function todayIso() {
+      const d = new Date();
+      const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
+      return local.toISOString().slice(0, 10);
+    }
+
+    function makeId(prefix = "item") {
+      if (crypto && crypto.randomUUID) return `${prefix}-${crypto.randomUUID()}`;
+      return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+    }
+
+    function jobKey(job) {
+      return `${String(job.company || "").trim().toLowerCase()}|${String(job.title || "").trim().toLowerCase()}`;
+    }
+
+    function sourceName(text) {
+      const value = String(text || "").trim();
+      return value.split("—")[0].trim() || "Other";
+    }
+
+    function normalizeJob(job) {
+      return {
+        ...job,
+        id: job.id || makeId("job"),
+        company: job.company || "",
+        title: job.title || "",
+        lane: job.lane || "",
+        location: job.location || "",
+        pay: job.pay || "",
+        fit: Number(job.fit || 0),
+        sourceFreshness: job.sourceFreshness || job.source || "",
+        keyTake: job.keyTake || "",
+        recommendedResume: job.recommendedResume || job.resumeVersion || "",
+        url: job.url || job.applyLink || "",
+        weekAdded: job.weekAdded || todayIso(),
+        status: STATUS_OPTIONS.includes(job.status) ? job.status : "To Apply",
+        priority: PRIORITY_OPTIONS.includes(job.priority) ? job.priority : "C - Look into",
+        appliedDate: job.appliedDate || "",
+        resumeUsed: job.resumeUsed || "",
+        resumeLink: job.resumeLink || "",
+        coverLetterUsed: job.coverLetterUsed || "",
+        coverLetterLink: job.coverLetterLink || "",
+        hiringManager: job.hiringManager || "",
+        hiringManagerTitle: job.hiringManagerTitle || "",
+        hiringManagerLink: job.hiringManagerLink || "",
+        recruiterName: job.recruiterName || "",
+        recruiterContact: job.recruiterContact || "",
+        lastContact: job.lastContact || "",
+        followUpDate: job.followUpDate || "",
+        nextStep: job.nextStep || "",
+        notes: job.notes || "",
+        archived: Boolean(job.archived),
+        createdAt: job.createdAt || nowIso(),
+        updatedAt: job.updatedAt || nowIso()
+      };
+    }
+
+    function normalizeRecruiter(recruiter) {
+      return {
+        ...recruiter,
+        id: recruiter.id || makeId("recruiter"),
+        name: recruiter.name || "",
+        firm: recruiter.firm || "",
+        specialty: recruiter.specialty || "",
+        status: recruiter.status || "Not contacted",
+        linkedIn: recruiter.linkedIn || "",
+        email: recruiter.email || "",
+        phone: recruiter.phone || "",
+        lastContact: recruiter.lastContact || "",
+        nextFollowUp: recruiter.nextFollowUp || "",
+        relatedRoles: recruiter.relatedRoles || "",
+        notes: recruiter.notes || "",
+        archived: Boolean(recruiter.archived || recruiter.status === "Archived"),
+        connectionType: recruiter.connectionType || "General",
+        relatedJobId: recruiter.relatedJobId || "",
+        contactType: recruiter.contactType || "",
+        outreachStage: recruiter.outreachStage || "",
+        createdAt: recruiter.createdAt || nowIso(),
+        updatedAt: recruiter.updatedAt || nowIso()
+      };
+    }
+
+    function blankState() {
+      return {
+        type: "job-search-state",
+        version: APP_VERSION,
+        meta: {
+          createdAt: nowIso(),
+          updatedAt: nowIso(),
+          seedVersion: "2026-08-03",
+          lastImport: "",
+          lastRefresh: "2026-11-17",
+          refreshNote: "Public starter roles only. Import private refreshed backup for your complete history."
+        },
+        jobs: SEED_JOBS.map(normalizeJob),
+        recruiters: []
+      };
+    }
+
+    function mergeSeedJobs(existingState) {
+      const byKey = new Map(existingState.jobs.map(job => [jobKey(job), job]));
+      SEED_JOBS.map(normalizeJob).forEach(seed => {
+        const current = byKey.get(jobKey(seed));
+        if (!current) {
+          existingState.jobs.push(seed);
+          return;
+        }
+        const tracking = {};
+        TRACKING_FIELDS.forEach(field => tracking[field] = current[field]);
+        Object.assign(current, seed, tracking, { id: current.id, updatedAt: current.updatedAt || nowIso() });
+      });
+      return existingState;
+    }
+
+    function loadState() {
+      let loaded = null;
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) loaded = JSON.parse(raw);
+      } catch (error) {
+        storageAvailable = false;
+      }
+
+      if (!loaded || !Array.isArray(loaded.jobs)) {
+        return blankState();
+      }
+
+      loaded.jobs = loaded.jobs.map(normalizeJob);
+      loaded.recruiters = Array.isArray(loaded.recruiters)
+        ? loaded.recruiters.map(normalizeRecruiter)
+        : [];
+      loaded.meta = loaded.meta || {};
+      loaded.version = APP_VERSION;
+      // Never re-inject stale starter jobs over a private imported tracker.
+      return loaded;
+    }
+
+    function saveState(message = "Saved locally") {
+      state.meta.updatedAt = nowIso();
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        storageAvailable = true;
+      } catch (error) {
+        storageAvailable = false;
+      }
+      updateStorageStatus(message);
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(() => updateStorageStatus("Saved locally"), 1600);
+    }
+
+    function updateStorageStatus(message = "Saved locally") {
+      const el = document.getElementById("saveState");
+      const warning = document.getElementById("storageWarning");
+      const details = document.getElementById("storageDetails");
+      if (storageAvailable) {
+        warning.classList.remove("show");
+        el.innerHTML = `<strong>${esc(message)}</strong> · ${formatDateTime(state.meta.updatedAt)}`;
+        details.textContent = `Browser storage is working. Last saved ${formatDateTime(state.meta.updatedAt)}. Export a JSON backup before switching browsers or devices.`;
+      } else {
+        warning.classList.add("show");
+        el.innerHTML = `<strong style="color:var(--warn)">Session only</strong> · export a backup`;
+        details.textContent = "Browser storage could not be accessed. Changes remain available while this page is open, but export a JSON backup before closing.";
+      }
+    }
+
+    function esc(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function safeUrl(value) {
+      const text = String(value || "").trim();
+      if (!text) return "";
+      if (/^(https?:\/\/|mailto:)/i.test(text)) return text;
+      if (text.includes("@") && !text.includes(" ")) return `mailto:${text}`;
+      return "";
+    }
+
+    function formatDate(value) {
+      if (!value) return "—";
+      const d = new Date(`${value}T12:00:00`);
+      if (Number.isNaN(d.getTime())) return value;
+      return d.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+    }
+
+    function formatDateTime(value) {
+      if (!value) return "just now";
+      const d = new Date(value);
+      if (Number.isNaN(d.getTime())) return "just now";
+      return d.toLocaleString(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+    }
+
+    function dateDiffDays(value) {
+      if (!value) return Infinity;
+      const target = new Date(`${value}T12:00:00`);
+      const today = new Date(`${todayIso()}T12:00:00`);
+      return Math.round((target - today) / 86400000);
+    }
+
+    function priorityRank(value) {
+      const index = PRIORITY_OPTIONS.indexOf(value);
+      return index === -1 ? 99 : index;
+    }
+
+    function statusBadge(status) {
+      const map = {
+        "To Apply": "blue",
+        "Tailoring": "yellow",
+        "Applied": "purple",
+        "Recruiter Screen": "green",
+        "Interviewing": "green",
+        "Offer": "green",
+        "Rejected": "red",
+        "Withdrawn": "gray",
+        "Archived": "gray"
+      };
+      return `<span class="badge ${map[status] || "gray"}">${esc(status)}</span>`;
+    }
+
+    function priorityBadge(priority) {
+      const cls = priority.startsWith("A") ? "green"
+        : priority.startsWith("B") ? "blue"
+        : priority.startsWith("C") ? "yellow"
+        : "gray";
+      return `<span class="badge ${cls}">${esc(priority)}</span>`;
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toast.classList.remove("show"), 2600);
+    }
+
+    function setTab(tabId) {
+      document.querySelectorAll(".tab-panel").forEach(panel => panel.classList.toggle("active", panel.id === tabId));
+      document.querySelectorAll(".tab-button").forEach(button => button.classList.toggle("active", button.dataset.tab === tabId));
+      if (tabId === "dashboard") renderDashboard();
+      if (tabId === "jobs") renderJobs();
+      if (tabId === "recruiters") renderRecruiters();
+    }
+
+    function renderAll() {
+      const days = Math.max(0, Math.ceil((new Date("2027-04-01T00:00:00").getTime() - Date.now()) / 86400000));
+      document.getElementById("goalCountdown").textContent = `${days} days until April 1 · aim to be signed and settled by March`;
+      populateFilters();
+      renderDashboard();
+      renderJobs();
+      renderRecruiters();
+      updateStorageStatus();
+    }
+
+    function activeJobs() {
+      return state.jobs.filter(job => !job.archived);
+    }
+
+    function renderDashboard() {
+      const jobs = activeJobs();
+      const toApply = jobs.filter(job => ["To Apply", "Tailoring"].includes(job.status)).length;
+      const applied = jobs.filter(job => ["Applied", "Recruiter Screen", "Interviewing", "Offer"].includes(job.status)).length;
+      const interviewing = jobs.filter(job => ["Recruiter Screen", "Interviewing"].includes(job.status)).length;
+      const due = jobs.filter(job => {
+        const days = dateDiffDays(job.followUpDate);
+        return job.followUpDate && days <= 0 && !["Rejected", "Withdrawn", "Offer"].includes(job.status);
+      }).length;
+
+      const metrics = [
+        ["Tracked roles", state.jobs.length, `${state.jobs.filter(j => j.archived).length} archived`],
+        ["To apply / tailor", toApply, "Ready for action"],
+        ["Submitted", applied, "Applied or beyond"],
+        ["In conversation", interviewing, "Screens and interviews"],
+        ["Follow-ups due", due, due ? "Needs attention" : "Nothing overdue"]
+      ];
+      document.getElementById("metrics").innerHTML = metrics.map(([label, value, detail]) => `
+        <div class="metric">
+          <div class="label">${esc(label)}</div>
+          <div class="value">${esc(value)}</div>
+          <div class="detail">${esc(detail)}</div>
+        </div>
+      `).join("");
+
+      const top = jobs
+        .filter(job => ["To Apply", "Tailoring"].includes(job.status) && job.priority !== "D - Skip")
+        .sort((a, b) => (b.refreshBatch === "2026-11-17") - (a.refreshBatch === "2026-11-17") || priorityRank(a.priority) - priorityRank(b.priority) || b.fit - a.fit)
+        .slice(0, 9);
+      document.getElementById("topJobs").innerHTML = top.length
+        ? `<div class="compact-list">${top.map(job => `
+            <div class="compact-item">
+              <div>
+                <strong>${esc(job.company)} — ${esc(job.title)}</strong>
+                <small>${esc(job.location)} · ${esc(job.pay || "Pay not disclosed")}${job.refreshBatch === "2026-11-17" ? " · NEW NOV 17" : ""}</small>
+              </div>
+              <div class="row-actions">
+                ${priorityBadge(job.priority)}
+                <button class="btn small" data-edit-job="${esc(job.id)}">Open</button>
+              </div>
+            </div>`).join("")}</div>`
+        : `<div class="empty">No unsubmitted priority roles.</div>`;
+
+      const followUps = jobs
+        .filter(job => job.followUpDate && dateDiffDays(job.followUpDate) <= 14 && !["Rejected", "Withdrawn", "Offer"].includes(job.status))
+        .sort((a, b) => String(a.followUpDate).localeCompare(String(b.followUpDate)))
+        .slice(0, 10);
+      document.getElementById("followUps").innerHTML = followUps.length
+        ? `<div class="compact-list">${followUps.map(job => {
+            const days = dateDiffDays(job.followUpDate);
+            const dueText = days < 0 ? `${Math.abs(days)}d overdue` : days === 0 ? "Due today" : `In ${days}d`;
+            return `
+              <div class="compact-item">
+                <div>
+                  <strong>${esc(job.company)}</strong>
+                  <small>${esc(job.recruiterName || job.hiringManager || job.nextStep || job.title)}</small>
+                </div>
+                <div style="text-align:right">
+                  <span class="badge ${days <= 0 ? "red" : "yellow"}">${esc(dueText)}</span>
+                  <div style="margin-top:5px"><button class="btn small" data-edit-job="${esc(job.id)}">Open</button></div>
+                </div>
+              </div>`;
+          }).join("")}</div>`
+        : `<div class="empty">No follow-ups due in the next 14 days.</div>`;
+
+      const statuses = STATUS_OPTIONS.filter(status => status !== "Archived");
+      const counts = statuses.map(status => [status, jobs.filter(job => job.status === status).length]);
+      const max = Math.max(1, ...counts.map(item => item[1]));
+      document.getElementById("pipeline").innerHTML = counts.map(([status, count]) => `
+        <div class="pipeline-item">
+          <span>${esc(status)}</span>
+          <div class="track"><div class="fill" style="width:${Math.round(count / max * 100)}%"></div></div>
+          <strong>${count}</strong>
+        </div>
+      `).join("");
+    }
+
+    function populateSelect(selectId, values, currentValue = "") {
+      const select = document.getElementById(selectId);
+      const first = select.options[0]?.outerHTML || "";
+      select.innerHTML = first + values.map(value => `<option value="${esc(value)}">${esc(value)}</option>`).join("");
+      select.value = currentValue;
+    }
+
+    function populateFilters() {
+      const current = {
+        status: document.getElementById("statusFilter")?.value || "",
+        priority: document.getElementById("priorityFilter")?.value || "",
+        lane: document.getElementById("laneFilter")?.value || "",
+        source: document.getElementById("sourceFilter")?.value || "",
+        recruiterStatus: document.getElementById("recruiterStatusFilter")?.value || ""
+      };
+      populateSelect("statusFilter", STATUS_OPTIONS, current.status);
+      populateSelect("priorityFilter", PRIORITY_OPTIONS, current.priority);
+      populateSelect("laneFilter", [...new Set(state.jobs.map(job => job.lane).filter(Boolean))].sort(), current.lane);
+      populateSelect("sourceFilter", [...new Set(state.jobs.map(job => sourceName(job.sourceFreshness)).filter(Boolean))].sort(), current.source);
+      populateSelect("recruiterStatusFilter", RECRUITER_STATUS_OPTIONS, current.recruiterStatus);
+    }
+
+    function filteredJobs() {
+      const q = document.getElementById("jobSearch").value.trim().toLowerCase();
+      const status = document.getElementById("statusFilter").value;
+      const priority = document.getElementById("priorityFilter").value;
+      const lane = document.getElementById("laneFilter").value;
+      const source = document.getElementById("sourceFilter").value;
+      const archive = document.getElementById("archiveFilter").value;
+      const sort = document.getElementById("sortJobs").value;
+
+      let jobs = state.jobs.filter(job => {
+        const stage = job.archived || job.status === "Archived" ? "Archived" : ["Rejected","Withdrawn"].includes(job.status) ? "Rejected" : ["To Apply","Tailoring"].includes(job.status) ? "toapply" : "applied";
+        if (jobView === "fresh" && job.refreshBatch !== "2026-11-17") return false;
+        if (jobView !== "all" && jobView !== "fresh" && stage !== jobView) return false;
+        if (jobView === "all" && archive === "active" && job.archived) return false;
+        if (jobView === "all" && archive === "archived" && !job.archived) return false;
+        if (status && job.status !== status) return false;
+        if (priority && job.priority !== priority) return false;
+        if (lane && job.lane !== lane) return false;
+        if (source && sourceName(job.sourceFreshness) !== source) return false;
+        if (q) {
+          const haystack = [
+            job.company, job.title, job.lane, job.location, job.pay, job.sourceFreshness,
+            job.keyTake, job.recommendedResume, job.resumeUsed, job.coverLetterUsed,
+            job.hiringManager, job.recruiterName, job.nextStep, job.notes
+          ].join(" ").toLowerCase();
+          if (!haystack.includes(q)) return false;
+        }
+        return true;
+      });
+
+      jobs.sort((a, b) => {
+        if (sort === "refreshed") return String(b.verificationDate || b.weekAdded).localeCompare(String(a.verificationDate || a.weekAdded)) || b.fit - a.fit;
+        if (sort === "fit") return b.fit - a.fit || a.company.localeCompare(b.company);
+        if (sort === "company") return a.company.localeCompare(b.company) || a.title.localeCompare(b.title);
+        if (sort === "newest") return String(b.weekAdded).localeCompare(String(a.weekAdded)) || b.fit - a.fit;
+        if (sort === "followup") {
+          const av = a.followUpDate || "9999-12-31";
+          const bv = b.followUpDate || "9999-12-31";
+          return av.localeCompare(bv) || priorityRank(a.priority) - priorityRank(b.priority);
+        }
+        if (jobView === "toapply") return (b.refreshBatch === "2026-11-17") - (a.refreshBatch === "2026-11-17") || priorityRank(a.priority) - priorityRank(b.priority) || b.fit - a.fit;
+        return priorityRank(a.priority) - priorityRank(b.priority) || b.fit - a.fit;
+      });
+      return jobs;
+    }
+
+    function documentSummary(job) {
+      const resume = job.resumeUsed || job.recommendedResume || "Not selected";
+      const letter = job.coverLetterUsed || "No letter tracked";
+      const resumeLink = safeUrl(job.resumeLink);
+      const letterLink = safeUrl(job.coverLetterLink);
+      return `
+        <div>${resumeLink ? `<a href="${esc(resumeLink)}" target="_blank" rel="noopener">${esc(resume)}</a>` : esc(resume)}</div>
+        <div class="muted">${letterLink ? `<a href="${esc(letterLink)}" target="_blank" rel="noopener">${esc(letter)}</a>` : esc(letter)}</div>
+      `;
+    }
+
+    function contactSummary(job) {
+      const person = job.hiringManager || job.recruiterName;
+      const title = job.hiringManager ? job.hiringManagerTitle : "";
+      const link = safeUrl(job.hiringManager ? job.hiringManagerLink : job.recruiterContact);
+      if (!person) return `<span class="muted">Not identified</span>`;
+      const label = link ? `<a href="${esc(link)}" target="_blank" rel="noopener">${esc(person)}</a>` : esc(person);
+      return `<div>${label}</div>${title ? `<div class="muted">${esc(title)}</div>` : ""}`;
+    }
+
+    function renderJobs() {
+      const groups = {toapply:0, applied:0, Rejected:0, Archived:0, fresh:0};
+      state.jobs.forEach(j => {const g = j.archived || j.status === "Archived" ? "Archived" : ["Rejected","Withdrawn"].includes(j.status) ? "Rejected" : ["To Apply","Tailoring"].includes(j.status) ? "toapply" : "applied";groups[g]++;if(j.refreshBatch === "2026-11-17") groups.fresh++;});
+      Object.entries({countToApply:groups.toapply,countApplied:groups.applied,countRejected:groups.Rejected,countArchived:groups.Archived,countFresh:groups.fresh}).forEach(([id,n]) => {document.getElementById(id).textContent=n;});
+      const jobs = filteredJobs();
+      document.getElementById("jobCountText").textContent = `${jobs.length} shown · ${activeJobs().length} active · ${state.jobs.length} total`;
+      const body = document.getElementById("jobsTable");
+      if (!jobs.length) {
+        body.innerHTML = `<tr><td colspan="9"><div class="empty">No jobs match the current filters.</div></td></tr>`;
+        updateSelectedCount();
+        return;
+      }
+
+      body.innerHTML = jobs.map(job => {
+        const applyUrl = safeUrl(job.url);
+        const followDays = dateDiffDays(job.followUpDate);
+        const followClass = followDays <= 0 ? "red" : followDays <= 7 ? "yellow" : "gray";
+        return `
+          <tr>
+            <td><input type="checkbox" data-select-job="${esc(job.id)}" ${selectedJobIds.has(job.id) ? "checked" : ""} aria-label="Select ${esc(job.company)} job" style="width:17px;height:17px"></td>
+            <td>${priorityBadge(job.priority)}</td>
+            <td><select class="mini-status" data-quick-status="${esc(job.id)}" aria-label="Change application status for ${esc(job.company)}">${STATUS_OPTIONS.filter(x => x !== "Archived").map(x => `<option value="${esc(x)}" ${job.status === x ? "selected" : ""}>${esc(x)}</option>`).join("")}</select></td>
+            <td style="min-width:225px">
+              <div class="role-title">${esc(job.title)}</div>
+              <div class="company">${esc(job.company)} <span class="muted">· ${esc(job.lane || "CRM / Systems")}</span></div>
+              <div class="role-links">${applyUrl ? `<a href="${esc(applyUrl)}" target="_blank" rel="noopener noreferrer">View posting ↗</a>` : `<span class="muted">No link</span>`}
+              ${job.refreshBatch === "2026-11-17" ? `<span class="fresh-dot">NEW / REVERIFIED NOV 17</span>` : ""}</div>
+              ${job.listingStatus && /unavailable|needs verification|mismatch/i.test(job.listingStatus) ? `<small class="muted-note">${esc(job.listingStatus)}</small>` : ""}
+            </td>
+            <td style="min-width:200px"><div>${esc(job.location || "—")}</div><div class="muted-note">${esc(job.pay || "Pay not disclosed")}</div></td>
+            <td><span class="fit-score">${esc(job.fit || "—")}</span></td>
+            <td>${formatDate(job.appliedDate)}<div class="muted-note">${esc(job.resumeUsed || job.recommendedResume || "Resume not selected")}</div></td>
+            <td style="min-width:165px">${job.followUpDate ? `<span class="badge ${followClass}">${esc(formatDate(job.followUpDate))}</span>` : `<span class="muted">Not scheduled</span>`}
+              ${job.nextStep ? `<div class="muted-note clamp-two">${esc(job.nextStep)}</div>` : ""}</td>
+            <td><div class="row-actions"><button class="btn small" data-edit-job="${esc(job.id)}">Edit</button><button class="btn small" data-toggle-archive="${esc(job.id)}">${job.archived ? "Restore" : "Archive"}</button></div></td>
+          </tr>`;
+      }).join("");
+      updateSelectedCount();
+    }
+
+    function filteredRecruiters() {
+      const q = document.getElementById("recruiterSearch").value.trim().toLowerCase();
+      const status = document.getElementById("recruiterStatusFilter").value;
+      const sort = document.getElementById("recruiterSort").value;
+      const recruiters = state.recruiters.filter(rec => {
+        const recGroup = rec.archived ? "archived" : /not contacted|target/i.test(rec.status || "") ? "not" : "contacted";
+        if (recruiterView !== "all" && recruiterView !== recGroup) return false;
+        if (status && rec.status !== status) return false;
+        if (q) {
+          const haystack = [rec.name, rec.firm, rec.specialty, rec.status, rec.relatedRoles, rec.notes].join(" ").toLowerCase();
+          if (!haystack.includes(q)) return false;
+        }
+        return true;
+      });
+      recruiters.sort((a, b) => {
+        if (sort === "name") return a.name.localeCompare(b.name);
+        if (sort === "status") return RECRUITER_STATUS_OPTIONS.indexOf(a.status) - RECRUITER_STATUS_OPTIONS.indexOf(b.status) || a.name.localeCompare(b.name);
+        return (a.nextFollowUp || "9999-12-31").localeCompare(b.nextFollowUp || "9999-12-31") || a.name.localeCompare(b.name);
+      });
+      return recruiters;
+    }
+
+    function renderRecruiters() {
+      const recruiters = filteredRecruiters();
+      const body = document.getElementById("recruitersTable");
+      if (!recruiters.length) {
+        body.innerHTML = `<tr><td colspan="6"><div class="empty">No recruiters added yet. Start with specialist Salesforce, Dynamics 365 and RevOps recruiters.</div></td></tr>`;
+        return;
+      }
+      body.innerHTML = recruiters.map(rec => {
+        const linkedIn = safeUrl(rec.linkedIn);
+        const email = safeUrl(rec.email);
+        const followDays = dateDiffDays(rec.nextFollowUp);
+        const linked = state.jobs.find(j => j.id === rec.relatedJobId);
+        return `<tr>
+          <td style="min-width:170px"><div class="role-title">${esc(rec.name)}</div><div class="company">${esc(rec.firm || "Independent / internal")}</div><div class="muted-note">${esc(rec.specialty || "")}</div></td>
+          <td><span class="badge ${rec.archived ? "gray" : /contacted|conversation|replied|call/i.test(rec.status) && !/not contacted/i.test(rec.status) ? "green" : "blue"}">${esc(rec.archived ? "Archived" : rec.status)}</span><div class="muted-note">${esc(rec.connectionType || "General contact")}</div></td>
+          <td style="min-width:190px">${linked ? `<strong>${esc(linked.company)}</strong><div class="muted-note">${esc(linked.title)}</div><span class="badge ${linked.status === "Rejected" ? "red" : "blue"}">${esc(linked.status)}</span>` : `<span class="muted">General outreach</span>`}<div class="muted-note">${esc(rec.relatedRoles || "")}</div></td>
+          <td>${rec.nextFollowUp ? `<span class="badge ${followDays <= 0 ? "red" : followDays <= 7 ? "yellow" : "gray"}">${esc(formatDate(rec.nextFollowUp))}</span>` : `<span class="muted">Not scheduled</span>`}<div class="muted-note">Last: ${formatDate(rec.lastContact)}</div></td>
+          <td style="min-width:165px">${linkedIn ? `<a href="${esc(linkedIn)}" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>` : ""}${email ? `<div><a href="${esc(email)}">Email</a></div>` : ""}<div class="muted-note clamp-two">${esc(rec.notes || "")}</div></td>
+          <td><div class="row-actions"><button class="btn small" data-edit-recruiter="${esc(rec.id)}">Edit</button><button class="btn small" data-quick-recruiter-archive="${esc(rec.id)}">${rec.archived ? "Restore" : "Archive"}</button></div></td>
+        </tr>`;
+      }).join("");
+    }
+
+    function setSelectOptions(id, values) {
+      document.getElementById(id).innerHTML = values.map(value => `<option value="${esc(value)}">${esc(value)}</option>`).join("");
+    }
+
+    function openJobModal(id = "") {
+      const job = id ? state.jobs.find(item => item.id === id) : normalizeJob({
+        id: "",
+        weekAdded: todayIso(),
+        priority: "B - Strong",
+        status: "To Apply"
+      });
+      if (!job) return;
+
+      document.getElementById("jobModalTitle").textContent = id ? `Edit: ${job.company}` : "Add job";
+      document.getElementById("jobId").value = job.id || "";
+      document.getElementById("jobCompany").value = job.company;
+      document.getElementById("jobTitle").value = job.title;
+      document.getElementById("jobPriority").value = job.priority;
+      document.getElementById("jobStatus").value = job.status;
+      document.getElementById("jobLane").value = job.lane;
+      document.getElementById("jobFit").value = job.fit || "";
+      document.getElementById("jobLocation").value = job.location;
+      document.getElementById("jobPay").value = job.pay;
+      document.getElementById("jobSource").value = job.sourceFreshness;
+      document.getElementById("jobWeek").value = job.weekAdded;
+      document.getElementById("jobUrl").value = job.url;
+      document.getElementById("jobKeyTake").value = job.keyTake;
+      document.getElementById("jobAppliedDate").value = job.appliedDate;
+      document.getElementById("jobRecommendedResume").value = job.recommendedResume;
+      document.getElementById("jobResumeUsed").value = job.resumeUsed;
+      document.getElementById("jobResumeLink").value = job.resumeLink;
+      document.getElementById("jobCoverLetterUsed").value = job.coverLetterUsed;
+      document.getElementById("jobCoverLetterLink").value = job.coverLetterLink;
+      document.getElementById("jobHiringManager").value = job.hiringManager;
+      document.getElementById("jobHiringManagerTitle").value = job.hiringManagerTitle;
+      document.getElementById("jobHiringManagerLink").value = job.hiringManagerLink;
+      document.getElementById("jobRecruiterName").value = job.recruiterName;
+      document.getElementById("jobRecruiterContact").value = job.recruiterContact;
+      document.getElementById("jobLastContact").value = job.lastContact;
+      document.getElementById("jobFollowUpDate").value = job.followUpDate;
+      document.getElementById("jobNextStep").value = job.nextStep;
+      document.getElementById("jobNotes").value = job.notes;
+      document.getElementById("jobArchived").checked = job.archived;
+      document.getElementById("deleteJob").style.visibility = id ? "visible" : "hidden";
+      document.getElementById("jobModalBackdrop").classList.add("open");
+      document.getElementById("jobCompany").focus();
+    }
+
+    function closeJobModal() {
+      document.getElementById("jobModalBackdrop").classList.remove("open");
+    }
+
+    function saveJobFromForm() {
+      const company = document.getElementById("jobCompany").value.trim();
+      const title = document.getElementById("jobTitle").value.trim();
+      if (!company || !title) {
+        showToast("Company and job title are required.");
+        return;
+      }
+      const id = document.getElementById("jobId").value;
+      const existing = id ? state.jobs.find(item => item.id === id) : null;
+      const job = normalizeJob({
+        ...(existing || {}),
+        id: existing?.id || makeId("job"),
+        company,
+        title,
+        priority: document.getElementById("jobPriority").value,
+        status: document.getElementById("jobStatus").value,
+        responseStatus: document.getElementById("jobStatus").value === "Rejected" ? "Rejected" : (existing?.responseStatus || ""),
+        responseDate: document.getElementById("jobStatus").value === "Rejected" ? (existing?.responseDate || todayIso()) : (existing?.responseDate || ""),
+        lane: document.getElementById("jobLane").value.trim(),
+        fit: document.getElementById("jobFit").value,
+        location: document.getElementById("jobLocation").value.trim(),
+        pay: document.getElementById("jobPay").value.trim(),
+        sourceFreshness: document.getElementById("jobSource").value.trim(),
+        weekAdded: document.getElementById("jobWeek").value || todayIso(),
+        url: document.getElementById("jobUrl").value.trim(),
+        keyTake: document.getElementById("jobKeyTake").value.trim(),
+        appliedDate: document.getElementById("jobAppliedDate").value,
+        recommendedResume: document.getElementById("jobRecommendedResume").value.trim(),
+        resumeUsed: document.getElementById("jobResumeUsed").value.trim(),
+        resumeLink: document.getElementById("jobResumeLink").value.trim(),
+        coverLetterUsed: document.getElementById("jobCoverLetterUsed").value.trim(),
+        coverLetterLink: document.getElementById("jobCoverLetterLink").value.trim(),
+        hiringManager: document.getElementById("jobHiringManager").value.trim(),
+        hiringManagerTitle: document.getElementById("jobHiringManagerTitle").value.trim(),
+        hiringManagerLink: document.getElementById("jobHiringManagerLink").value.trim(),
+        recruiterName: document.getElementById("jobRecruiterName").value.trim(),
+        recruiterContact: document.getElementById("jobRecruiterContact").value.trim(),
+        lastContact: document.getElementById("jobLastContact").value,
+        followUpDate: document.getElementById("jobFollowUpDate").value,
+        nextStep: document.getElementById("jobNextStep").value.trim(),
+        notes: document.getElementById("jobNotes").value.trim(),
+        archived: document.getElementById("jobArchived").checked,
+        updatedAt: nowIso()
+      });
+
+      if (existing) Object.assign(existing, job);
+      else state.jobs.push(job);
+      saveState();
+      closeJobModal();
+      populateFilters();
+      renderDashboard();
+      renderJobs();
+      showToast(existing ? "Job updated." : "Job added.");
+    }
+
+    function deleteCurrentJob() {
+      const id = document.getElementById("jobId").value;
+      const job = state.jobs.find(item => item.id === id);
+      if (!job) return;
+      if (!confirm(`Delete ${job.company} — ${job.title}? This cannot be undone unless you have a backup.`)) return;
+      state.jobs = state.jobs.filter(item => item.id !== id);
+      saveState();
+      closeJobModal();
+      renderAll();
+      showToast("Job deleted.");
+    }
+
+    function openRecruiterModal(id = "") {
+      const rec = id ? state.recruiters.find(item => item.id === id) : normalizeRecruiter({ id: "" });
+      if (!rec) return;
+      document.getElementById("recruiterModalTitle").textContent = id ? `Edit: ${rec.name}` : "Add recruiter";
+      document.getElementById("recruiterId").value = rec.id || "";
+      document.getElementById("recruiterName").value = rec.name;
+      document.getElementById("recruiterFirm").value = rec.firm;
+      document.getElementById("recruiterSpecialty").value = rec.specialty;
+      document.getElementById("recruiterRelationshipStatus").value = rec.status;
+      document.getElementById("recruiterLinkedIn").value = rec.linkedIn;
+      document.getElementById("recruiterEmail").value = rec.email;
+      document.getElementById("recruiterPhone").value = rec.phone;
+      document.getElementById("recruiterLastContact").value = rec.lastContact;
+      document.getElementById("recruiterNextFollowUp").value = rec.nextFollowUp;
+      document.getElementById("recruiterRelatedRoles").value = rec.relatedRoles;
+      document.getElementById("recruiterRelatedJobId").innerHTML = `<option value="">General contact / not tied to posting</option>` + state.jobs.slice().sort((a,b)=>a.company.localeCompare(b.company)).map(j => `<option value="${esc(j.id)}">${esc(j.company + " — " + j.title)}</option>`).join("");
+      document.getElementById("recruiterRelatedJobId").value = rec.relatedJobId || "";
+      document.getElementById("recruiterConnectionType").value = rec.connectionType || "General";
+      document.getElementById("recruiterArchived").checked = !!rec.archived;
+      document.getElementById("recruiterNotes").value = rec.notes;
+      document.getElementById("deleteRecruiter").style.visibility = id ? "visible" : "hidden";
+      document.getElementById("recruiterModalBackdrop").classList.add("open");
+      document.getElementById("recruiterName").focus();
+    }
+
+    function closeRecruiterModal() {
+      document.getElementById("recruiterModalBackdrop").classList.remove("open");
+    }
+
+    function saveRecruiterFromForm() {
+      const name = document.getElementById("recruiterName").value.trim();
+      if (!name) {
+        showToast("Recruiter name is required.");
+        return;
+      }
+      const id = document.getElementById("recruiterId").value;
+      const existing = id ? state.recruiters.find(item => item.id === id) : null;
+      const rec = normalizeRecruiter({
+        ...(existing || {}),
+        id: existing?.id || makeId("recruiter"),
+        name,
+        firm: document.getElementById("recruiterFirm").value.trim(),
+        specialty: document.getElementById("recruiterSpecialty").value.trim(),
+        status: document.getElementById("recruiterRelationshipStatus").value,
+        linkedIn: document.getElementById("recruiterLinkedIn").value.trim(),
+        email: document.getElementById("recruiterEmail").value.trim(),
+        phone: document.getElementById("recruiterPhone").value.trim(),
+        lastContact: document.getElementById("recruiterLastContact").value,
+        nextFollowUp: document.getElementById("recruiterNextFollowUp").value,
+        relatedRoles: document.getElementById("recruiterRelatedRoles").value.trim(),
+        relatedJobId: document.getElementById("recruiterRelatedJobId").value,
+        connectionType: document.getElementById("recruiterConnectionType").value.trim(),
+        archived: document.getElementById("recruiterArchived").checked,
+        notes: document.getElementById("recruiterNotes").value.trim(),
+        updatedAt: nowIso()
+      });
+      if (existing) Object.assign(existing, rec);
+      else state.recruiters.push(rec);
+      saveState();
+      closeRecruiterModal();
+      renderDashboard();
+      renderRecruiters();
+      showToast(existing ? "Recruiter updated." : "Recruiter added.");
+    }
+
+    function deleteCurrentRecruiter() {
+      const id = document.getElementById("recruiterId").value;
+      const rec = state.recruiters.find(item => item.id === id);
+      if (!rec) return;
+      if (!confirm(`Delete recruiter ${rec.name}?`)) return;
+      state.recruiters = state.recruiters.filter(item => item.id !== id);
+      saveState();
+      closeRecruiterModal();
+      renderRecruiters();
+      showToast("Recruiter deleted.");
+    }
+
+    function downloadFile(filename, content, type = "application/json") {
+      const blob = new Blob([content], { type });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = filename;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    function exportBackup() {
+      const payload = {
+        type: "job-search-backup",
+        version: APP_VERSION,
+        exportedAt: nowIso(),
+        state
+      };
+      downloadFile(`ryan-job-search-backup-${todayIso()}.json`, JSON.stringify(payload, null, 2));
+      showToast("Full backup exported.");
+    }
+
+    function csvCell(value) {
+      const text = String(value ?? "");
+      return `"${text.replaceAll('"', '""')}"`;
+    }
+
+    function exportJobsCsv() {
+      const fields = [
+        "priority", "status", "company", "title", "lane", "location", "pay", "fit",
+        "sourceFreshness", "weekAdded", "appliedDate", "recommendedResume", "resumeUsed",
+        "resumeLink", "coverLetterUsed", "coverLetterLink", "hiringManager",
+        "hiringManagerTitle", "hiringManagerLink", "recruiterName", "recruiterContact",
+        "lastContact", "followUpDate", "nextStep", "keyTake", "notes", "url", "archived"
+      ];
+      const rows = [fields.join(",")].concat(state.jobs.map(job => fields.map(field => csvCell(job[field])).join(",")));
+      downloadFile(`ryan-job-applications-${todayIso()}.csv`, rows.join("\n"), "text/csv;charset=utf-8");
+      showToast("Jobs CSV exported.");
+    }
+
+    function exportRecruitersCsv() {
+      const fields = ["name", "firm", "specialty", "status", "linkedIn", "email", "phone", "lastContact", "nextFollowUp", "relatedRoles", "notes"];
+      const rows = [fields.join(",")].concat(state.recruiters.map(rec => fields.map(field => csvCell(rec[field])).join(",")));
+      downloadFile(`ryan-recruiters-${todayIso()}.csv`, rows.join("\n"), "text/csv;charset=utf-8");
+      showToast("Recruiters CSV exported.");
+    }
+
+    function downloadUpdateTemplate() {
+      const template = {
+        type: "weekly-job-update",
+        version: APP_VERSION,
+        week: todayIso(),
+        jobs: [
+          {
+            company: "Example Company",
+            title: "CRM Solution Architect",
+            priority: "A - Apply now",
+            lane: "Cross-Platform CRM",
+            location: "Remote, United States",
+            pay: "$140,000–$175,000",
+            fit: 92,
+            sourceFreshness: "LinkedIn — posted 1 day ago",
+            keyTake: "Why it fits and the primary gap or risk.",
+            recommendedResume: "Dual-Platform CRM Architect",
+            url: "https://example.com/job",
+            weekAdded: todayIso()
+          }
+        ]
+      };
+      downloadFile(`weekly-job-update-template-${todayIso()}.json`, JSON.stringify(template, null, 2));
+      showToast("Update template downloaded.");
+    }
+
+    function mergeJobUpdate(incomingJobs) {
+      const byKey = new Map(state.jobs.map(job => [jobKey(job), job]));
+      let added = 0;
+      let refreshed = 0;
+      incomingJobs.map(normalizeJob).forEach(incoming => {
+        const existing = byKey.get(jobKey(incoming));
+        if (!existing) {
+          state.jobs.push(incoming);
+          byKey.set(jobKey(incoming), incoming);
+          added++;
+          return;
+        }
+        const tracking = {};
+        TRACKING_FIELDS.forEach(field => tracking[field] = existing[field]);
+        const existingId = existing.id;
+        const createdAt = existing.createdAt;
+        Object.assign(existing, incoming, tracking, {
+          id: existingId,
+          createdAt,
+          updatedAt: nowIso()
+        });
+        refreshed++;
+      });
+      return { added, refreshed };
+    }
+
+    async function importJsonFile(file) {
+      const text = await file.text();
+      const payload = JSON.parse(text);
+      if (payload.type === "job-search-backup" && payload.state) {
+        if (!confirm("Replace the current tracker with this backup? Export your current backup first if needed.")) return;
+        state = {
+          ...payload.state,
+          jobs: (payload.state.jobs || []).map(normalizeJob),
+          recruiters: (payload.state.recruiters || []).map(normalizeRecruiter)
+        };
+        state.meta = state.meta || {};
+        state.meta.lastImport = nowIso();
+        saveState("Backup imported");
+        renderAll();
+        showToast("Backup imported.");
+        return;
+      }
+
+      if (payload.type === "weekly-job-update" || Array.isArray(payload.jobs)) {
+        const result = mergeJobUpdate(payload.jobs || []);
+        if (Array.isArray(payload.recruiters)) {
+          const existing = new Map(state.recruiters.map(rec => [String(rec.email || rec.linkedIn || rec.name).toLowerCase(), rec]));
+          payload.recruiters.map(normalizeRecruiter).forEach(rec => {
+            const key = String(rec.email || rec.linkedIn || rec.name).toLowerCase();
+            if (!existing.has(key)) state.recruiters.push(rec);
+          });
+        }
+        state.meta.lastImport = nowIso();
+        saveState("Weekly update imported");
+        populateFilters();
+        renderAll();
+        showToast(`${result.added} new jobs added; ${result.refreshed} existing postings refreshed.`);
+        return;
+      }
+
+      throw new Error("The JSON file is not a recognized backup or weekly update pack.");
+    }
+
+    function resetAllData() {
+      if (!confirm("Reset all local jobs, applications, and recruiters to the PUBLIC starter leads? Export a private backup first—this cannot otherwise be undone.")) return;
+      state = blankState();
+      saveState("Reset complete");
+      renderAll();
+      showToast("Reset to public starter leads.");
+    }
+
+    function updateSelectedCount() {
+      const count = selectedJobIds.size;
+      document.getElementById("bulkSelectionCount").textContent = `${count} selected`;
+      document.getElementById("bulkReject").disabled = count === 0;
+      document.getElementById("bulkArchive").disabled = count === 0;
+      const visible = filteredJobs();
+      const all = document.getElementById("selectAllVisibleJobs");
+      all.checked = visible.length > 0 && visible.every(j => selectedJobIds.has(j.id));
+      all.indeterminate = !all.checked && visible.some(j => selectedJobIds.has(j.id));
+    }
+    function bulkChange(to) {
+      const chosen = state.jobs.filter(j => selectedJobIds.has(j.id));
+      if (!chosen.length) return;
+      if (!confirm(`${to === "Rejected" ? "Mark" : "Archive"} ${chosen.length} selected applications${to === "Rejected" ? " as rejected" : ""}? Their history will remain available.`)) return;
+      for (const j of chosen) {
+        if (to === "Rejected") {j.status = "Rejected";j.responseStatus="Rejected";j.responseDate=todayIso();j.archived=false;}
+        else {j.archived=true;}
+        j.updatedAt=nowIso();
+      }
+      selectedJobIds.clear(); saveState();renderAll();showToast(`${chosen.length} applications updated.`);
+    }
+    function wireEvents() {
+      document.querySelectorAll(".tab-button").forEach(button => {
+        button.addEventListener("click", () => setTab(button.dataset.tab));
+      });
+      document.querySelectorAll("[data-open-tab]").forEach(button => {
+        button.addEventListener("click", () => setTab(button.dataset.openTab));
+      });
+
+      ["dashboardAddJob", "addJob"].forEach(id => document.getElementById(id).addEventListener("click", () => openJobModal()));
+      ["dashboardAddRecruiter", "addRecruiter"].forEach(id => document.getElementById(id).addEventListener("click", () => openRecruiterModal()));
+
+      document.querySelectorAll('[data-close-modal="job"]').forEach(button => button.addEventListener("click", closeJobModal));
+      document.querySelectorAll('[data-close-modal="recruiter"]').forEach(button => button.addEventListener("click", closeRecruiterModal));
+      document.getElementById("jobModalBackdrop").addEventListener("click", event => {
+        if (event.target.id === "jobModalBackdrop") closeJobModal();
+      });
+      document.getElementById("recruiterModalBackdrop").addEventListener("click", event => {
+        if (event.target.id === "recruiterModalBackdrop") closeRecruiterModal();
+      });
+
+      document.getElementById("saveJob").addEventListener("click", saveJobFromForm);
+      document.getElementById("deleteJob").addEventListener("click", deleteCurrentJob);
+      document.getElementById("saveRecruiter").addEventListener("click", saveRecruiterFromForm);
+      document.getElementById("deleteRecruiter").addEventListener("click", deleteCurrentRecruiter);
+
+      ["jobSearch", "statusFilter", "priorityFilter", "laneFilter", "sourceFilter", "sortJobs", "archiveFilter"].forEach(id => {
+        document.getElementById(id).addEventListener("input", renderJobs);
+        document.getElementById(id).addEventListener("change", renderJobs);
+      });
+      ["recruiterSearch", "recruiterStatusFilter", "recruiterSort"].forEach(id => {
+        document.getElementById(id).addEventListener("input", renderRecruiters);
+        document.getElementById(id).addEventListener("change", renderRecruiters);
+      });
+
+      document.querySelectorAll("[data-job-view]").forEach(btn => btn.addEventListener("click", () => {
+        selectedJobIds.clear();
+        jobView = btn.dataset.jobView;
+        document.querySelectorAll("[data-job-view]").forEach(x => x.classList.toggle("active", x.dataset.jobView === jobView));
+        document.getElementById("statusFilter").value = "";
+        renderJobs();
+      }));
+      document.querySelectorAll("[data-recruiter-view]").forEach(btn => btn.addEventListener("click", () => {
+        recruiterView = btn.dataset.recruiterView;
+        document.querySelectorAll("[data-recruiter-view]").forEach(x => x.classList.toggle("active", x.dataset.recruiterView === recruiterView));
+        document.getElementById("recruiterStatusFilter").value = "";
+        renderRecruiters();
+      }));
+      document.querySelectorAll("[data-jump-group]").forEach(btn => btn.addEventListener("click", () => {
+        selectedJobIds.clear();
+        setTab("jobs");
+        jobView = btn.dataset.jumpGroup;
+        document.querySelectorAll("[data-job-view]").forEach(x => x.classList.toggle("active", x.dataset.jobView === jobView));
+        renderJobs();
+      }));
+      document.getElementById("bulkReject").addEventListener("click", () => bulkChange("Rejected"));
+      document.getElementById("bulkArchive").addEventListener("click", () => bulkChange("Archived"));
+      document.getElementById("selectAllVisibleJobs").addEventListener("change", e => {
+        filteredJobs().forEach(j => e.target.checked ? selectedJobIds.add(j.id) : selectedJobIds.delete(j.id));
+        document.querySelectorAll("[data-select-job]").forEach(el => {el.checked = selectedJobIds.has(el.dataset.selectJob);});
+        updateSelectedCount();
+      });
+      document.getElementById("quickBackup").addEventListener("click", exportBackup);
+      document.getElementById("quickImport").addEventListener("click", () => document.getElementById("importFile").click());
+      document.addEventListener("change", event => {
+        const chosen = event.target.dataset.selectJob;
+        if (chosen) {
+          if (event.target.checked) selectedJobIds.add(chosen); else selectedJobIds.delete(chosen);
+          updateSelectedCount(); return;
+        }
+        const id = event.target.dataset.quickStatus;
+        if (!id) return;
+        const job = state.jobs.find(j => j.id === id);
+        if (!job) return;
+        job.status = event.target.value;
+        if (job.status === "Rejected") { job.responseStatus = "Rejected"; job.responseDate = todayIso(); }
+        if (job.status === "Applied") { if (!job.appliedDate) job.appliedDate = todayIso(); job.responseStatus = "Awaiting response"; }
+        if (job.status === "Recruiter Screen" || job.status === "Interviewing") job.responseStatus = job.status;
+        if (job.status === "To Apply") job.responseStatus = "";
+        job.updatedAt = nowIso();
+        saveState(); renderDashboard(); renderJobs(); renderRecruiters();
+        showToast(`${job.company} marked ${job.status}.`);
+      });
+      document.addEventListener("click", event => {
+        const recArchive = event.target.closest("[data-quick-recruiter-archive]");
+        if (recArchive) {
+          const rec = state.recruiters.find(r => r.id === recArchive.dataset.quickRecruiterArchive);
+          if (rec) {rec.archived=!rec.archived; rec.updatedAt=nowIso();saveState();renderRecruiters();showToast(rec.archived ? "Recruiter archived." : "Recruiter restored.");}
+          return;
+        }
+        const editJob = event.target.closest("[data-edit-job]");
+        if (editJob) openJobModal(editJob.dataset.editJob);
+
+        const archive = event.target.closest("[data-toggle-archive]");
+        if (archive) {
+          const job = state.jobs.find(item => item.id === archive.dataset.toggleArchive);
+          if (job) {
+            job.archived = !job.archived;
+            if (!job.archived && job.status === "Archived") job.status = "To Apply";
+            job.updatedAt = nowIso();
+            saveState();
+            renderDashboard();
+            renderJobs();
+            showToast(job.archived ? "Job archived." : "Job restored.");
+          }
+        }
+
+        const editRecruiter = event.target.closest("[data-edit-recruiter]");
+        if (editRecruiter) openRecruiterModal(editRecruiter.dataset.editRecruiter);
+      });
+
+      document.addEventListener("keydown", event => {
+        if (event.key === "Escape") {
+          closeJobModal();
+          closeRecruiterModal();
+        }
+      });
+
+      document.getElementById("exportBackup").addEventListener("click", exportBackup);
+      document.getElementById("exportJobsCsv").addEventListener("click", exportJobsCsv);
+      document.getElementById("exportRecruitersCsv").addEventListener("click", exportRecruitersCsv);
+      document.getElementById("downloadTemplate").addEventListener("click", downloadUpdateTemplate);
+      document.getElementById("resetAll").addEventListener("click", resetAllData);
+
+      document.getElementById("importDataButton").addEventListener("click", () => document.getElementById("importFile").click());
+      document.getElementById("importFile").addEventListener("change", async event => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+        try {
+          await importJsonFile(file);
+        } catch (error) {
+          alert(`Import failed: ${error.message}`);
+        } finally {
+          event.target.value = "";
+        }
+      });
+    }
+
+    setSelectOptions("jobPriority", PRIORITY_OPTIONS);
+    setSelectOptions("jobStatus", STATUS_OPTIONS);
+    setSelectOptions("recruiterRelationshipStatus", RECRUITER_STATUS_OPTIONS);
+    wireEvents();
+    saveState();
+    renderAll();
+  </script>
+</body>
+</html>
